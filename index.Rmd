@@ -37,23 +37,39 @@ library(plotly)
 library(spotifyr)
 ```
 
+```{r, setup2}
+# adding playlists
+mellow_bars <- get_playlist_audio_features("", "37i9dQZF1DWT6MhXz0jw61")
+hardcore_tracks <- get_playlist_audio_features("", "37i9dQZF1EIexrP9IBJXx5")
+Techno_tracks <- get_playlist_audio_features("", "37i9dQZF1DX6J5NfMJS675")
+```
+
 ### Mellow: a study
 
-Introduction
+On spotify, there are all kinds of playlists that have in some sence a connection to being considered mellow. This corpus will try to take a deeper dive into this, questioning what kind of attributes make a playlist 'mellow', an what don't. Specifiaclly, in this version, there will be taken a deeper look at to what extent the attribute 'loudness', as defined by spotify, has an influence on different song types.
   
-### Visualisation 1
+### Visualization 1
 
-New visualization
+```{r, first visualization}
+plot1 <- mellow_bars %>%
+  plot_ly(x = ~loudness, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
+  add_histogram(name = 'Mellow tracks')
+
+plot2 <- hardcore_tracks %>%
+  plot_ly(x = ~loudness, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
+  add_histogram(name = 'Hardcore mix')
+
+plot3 <- Techno_tracks %>%
+  plot_ly(x = ~loudness, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
+  add_histogram(name = 'Techno bunker')
+
+subplot(plot1, plot2, plot3, nrows = 1, shareY = TRUE)%>%
+  layout(title = "Loudness of different spotify playlists, captured in an histogram.")
+```
+
 
 ***
-Description
-
-### Visualisation 2
-
-New visualization
-
-***
-Description
+In this plot, the 'loudness' of three different playlists, 'Mellow bars', 'Hardcore mix', and 'Techno bunker' are visualised in histograms. Looking at the chart, one might be surpirsed to find the loudness of hardcore tracks to be considerably lower in comparison to the Techno and mellow playlists. Additionally, the loudness of the Techno tracks and the mello9w tracks seem on the same level, which is intresting.
 
 ### Conclusion and discussion
-Conclusion and discussion
+In conclusion, hardcore tracks resemble much less 'loudness' then the track types Techno and Mellow. One could however question Spotify's abillity to label tracks as loud.
