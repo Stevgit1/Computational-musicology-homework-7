@@ -35,41 +35,86 @@ library(tidyverse)
 library(ggplot2)
 library(plotly)
 library(spotifyr)
+library(compmus)
+library(ggdendro)
+library(heatmaply)
+library(tidymodels)
 ```
 
-```{r, setup2}
-# adding playlists
-mellow_bars <- get_playlist_audio_features("", "37i9dQZF1DWT6MhXz0jw61")
-hardcore_tracks <- get_playlist_audio_features("", "37i9dQZF1EIexrP9IBJXx5")
-Techno_tracks <- get_playlist_audio_features("", "37i9dQZF1DX6J5NfMJS675")
+### Dendogram
+
+```{r}
+joost_url = '3HoBmXOKHexP12ekdvXjLY'
+halloween <-
+  get_playlist_audio_features("Joost Klein", joost_url) |>
+  add_audio_analysis() |>
+  mutate(
+    segments = map2(segments, key, compmus_c_transpose),
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "mean", norm = "manhattan"
+      ),
+    timbre =
+      map(
+        segments,
+        compmus_summarise, timbre,
+        method = "mean"
+      )
+  ) |>
+  mutate(pitches = map(pitches, compmus_normalise, "clr")) |>
+  mutate_at(vars(pitches, timbre), map, bind_rows) |>
+  unnest(cols = c(pitches, timbre))
 ```
 
-### Mellow: a study
-
-On spotify, there are all kinds of playlists that have in some sence a connection to being considered mellow. This corpus will try to take a deeper dive into this, questioning what kind of attributes make a playlist 'mellow', an what don't. Specifiaclly, in this version, there will be taken a deeper look at to what extent the attribute 'loudness', as defined by spotify, has an influence on different song types.
-  
-### Visualization 1
-
-```{r, first visualization}
-plot1 <- mellow_bars %>%
-  plot_ly(x = ~loudness, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
-  add_histogram(name = 'Mellow tracks')
-
-plot2 <- hardcore_tracks %>%
-  plot_ly(x = ~loudness, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
-  add_histogram(name = 'Hardcore mix')
-
-plot3 <- Techno_tracks %>%
-  plot_ly(x = ~loudness, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
-  add_histogram(name = 'Techno bunker')
-
-subplot(plot1, plot2, plot3, nrows = 1, shareY = TRUE)%>%
-  layout(title = "Loudness of different spotify playlists, captured in an histogram.")
+```{r}
+halloween_juice <-
+  recipe(
+    track.name ~
+      danceability +
+      energy +
+      loudness +
+      speechiness +
+      acousticness +
+      instrumentalness +
+      liveness +
+      valence +
+      tempo +
+      duration +
+      C + `C#|Db` + D + `D#|Eb` +
+      E + `F` + `F#|Gb` + G +
+      `G#|Ab` + A + `A#|Bb` + B +
+      c01 + c02 + c03 + c04 + c05 + c06 +
+      c07 + c08 + c09 + c10 + c11 + c12,
+    data = halloween
+  ) |>
+  step_center(all_predictors()) |>
+  step_scale(all_predictors()) |> 
+  # step_range(all_predictors()) |> 
+  prep(halloween |> mutate(track.name = str_trunc(track.name, 20))) |>
+  juice() |>
+  column_to_rownames("track.name")
 ```
 
+```{r}
+halloween_dist <- dist(halloween_juice, method = "euclidean")
+
+halloween_dist |> 
+  hclust(method = "single") |> # Try single, average, and complete.
+  dendro_data() |>
+  ggdendrogram()
+```
+
+### Hierarchical clustering
+
+```{r}
+heatmaply(
+  halloween_juice,
+  hclustfun = hclust,
+  hclust_method = "average",  # Change for single, average, or complete linkage.
+  dist_method = "euclidean"
+)
+```
 
 ***
-In this plot, the 'loudness' of three different playlists, 'Mellow bars', 'Hardcore mix', and 'Techno bunker' are visualised in histograms. Looking at the chart, one might be surpirsed to find the loudness of hardcore tracks to be considerably lower in comparison to the Techno and mellow playlists. Additionally, the loudness of the Techno tracks and the mello9w tracks seem on the same level, which is intresting.
-
-### Conclusion and discussion
-In conclusion, hardcore tracks resemble much less 'loudness' then the track types Techno and Mellow. One could however question Spotify's abillity to label tracks as loud.
+Test usage of hierarchical clustering.
