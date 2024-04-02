@@ -1,7 +1,7 @@
 ---
-title: "Steven's corpus"
+title: "Mellow: a story"
 author: "Steven van Wely"
-date: "February the 23nd, 2024"
+date: "April the 2nd, 2024"
 output: 
   flexdashboard::flex_dashboard:
     storyboard: true
@@ -46,16 +46,16 @@ library(cowplot)
 # adding playlists
 mellow_bars <- get_playlist_audio_features("", "37i9dQZF1DWT6MhXz0jw61")
 hardcore_tracks <- get_playlist_audio_features("", "37i9dQZF1EIexrP9IBJXx5")
-Techno_tracks <- get_playlist_audio_features("", "37i9dQZF1DX6J5NfMJS675")
+top100_tracks <- get_playlist_audio_features("", "37i9dQZEVXbNG2KDcFcKOF")
 ```
 
-### Mellow: a study
+### Introduction
 
-On Spotify, there are all kinds of playlists that have in some sence a connection to being considered mellow. This corpus will try to take a deeper dive into this, questioning what kind of attributes make a playlist 'mellow', an what don't. Specifiaclly, in this version, there will be taken a deeper look at to what extent the attribute 'loudness', as defined by Spotify, has an influence on different song types.
+On Spotify, there are all kinds of playlists that have in some sense a connection to being considered mellow. This corpus will try to take a deeper dive into this, questioning what kind of attributes make a playlist 'mellow', an what don't. Specifically, in this version, there will be taken a deeper look at to what extent the attribute 'loudness', as defined by Spotify, has an influence on different song types.
   
 ### Visualization 1
 
-```{r, first visualization}
+```{r, loudness visualisation}
 plot1 <- mellow_bars %>%
   plot_ly(x = ~loudness, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
   add_histogram(name = 'Mellow tracks')
@@ -64,203 +64,47 @@ plot2 <- hardcore_tracks %>%
   plot_ly(x = ~loudness, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
   add_histogram(name = 'Hardcore mix')
 
-plot3 <- Techno_tracks %>%
+plot3 <- top100_tracks %>%
   plot_ly(x = ~loudness, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
-  add_histogram(name = 'Techno bunker')
+  add_histogram(name = 'Top Songs- Global')
 
 subplot(plot1, plot2, plot3, nrows = 1, shareY = TRUE)%>%
-  layout(title = "Loudness of different spotify playlists, captured in an histogram.")
+  layout(title = "Loudness of different spotify playlists, captured in an histogram.",
+    xaxis = list(title = "Loudness (db)"),
+    yaxis = list(title = "Frequency"))
 ```
 
 
 ***
 In this plot, the 'loudness' of three different playlists, 'Mellow bars', 'Hardcore mix', and 'Techno bunker' are visualized in histograms. Looking at the chart, one might be surprised to find the loudness of hardcore tracks to be considerably lower in comparison to the Techno and mellow playlists. Additionally, the loudness of the Techno tracks and the mellow tracks seem on the same level, which is interesting.
 
-### Conclusion and discussion
-In conclusion, hardcore tracks resemble much less 'loudness' then the track types Techno and Mellow. One could however question Spotify's ability to label tracks as loud.
+### Valence
 
-### Tallis plot
-```{r tallis}
-tallis <-
-  get_tidy_audio_analysis("2J3Mmybwue0jyQ0UVMYurH") |>
-  select(segments) |>
-  unnest(segments) |>
-  select(start, duration, pitches)
-chapelle <-
-  get_tidy_audio_analysis("4ccw2IcnFt1Jv9LqQCOYDi") |>
-  select(segments) |>
-  unnest(segments) |>
-  select(start, duration, pitches)
-maria_dist <-
-  compmus_long_distance(
-    tallis |> mutate(pitches = map(pitches, compmus_normalise, "manhattan")),
-    chapelle |> mutate(pitches = map(pitches, compmus_normalise, "manhattan")),
-    feature = pitches,
-    method = "aitchison"
-  )
-```
+```{r, valence visualisation}
+plot1 <- mellow_bars %>%
+  plot_ly(x = ~valence, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
+  add_histogram(name = 'Mellow tracks')
 
-```{r tallis-plot}
-maria <-
-  maria_dist |>
-  mutate(
-    tallis = xstart + xduration / 2,
-    chapelle = ystart + yduration / 2
-  ) |>
-  ggplot(
-    aes(
-      x = tallis,
-      y = chapelle,
-      fill = d
-    )
-  ) +
-  geom_tile(aes(width = xduration, height = yduration)) +
-  coord_fixed() +
-  scale_x_continuous(
-    breaks = c(0, 60, 105, 150, 185, 220, 280, 327),
-    labels =
-      c(
-        "Ave Maria",
-        "Ave cujus conceptio",
-        "Ave cujus nativitas",
-        "Ave pia humilitas",
-        "Ave vera virginitas",
-        "Ave preclara omnibus",
-        "O Mater Dei",
-        ""
-      ),
-  ) +
-  scale_y_continuous(
-    breaks = c(0, 45, 80, 120, 145, 185, 240, 287),
-    labels =
-      c(
-        "Ave Maria",
-        "Ave cujus conceptio",
-        "Ave cujus nativitas",
-        "Ave pia humilitas",
-        "Ave vera virginitas",
-        "Ave preclara omnibus",
-        "O Mater Dei",
-        ""
-      ),
-  ) +
-  scale_fill_viridis_c(option = "E", guide = "none") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1)) +
-  labs(x = "The Tallis Scholars", y = "La Chapelle Royale")
-maria
+plot2 <- hardcore_tracks %>%
+  plot_ly(x = ~valence, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
+  add_histogram(name = 'Hardcore mix')
+
+plot3 <- top100_tracks %>%
+  plot_ly(x = ~valence, hoverinfo = "text", text = ~paste("Track:", track.name, "<br>", "Playlist:", playlist_name)) %>%
+  add_histogram(name = 'Top Songs- Global')
+
+subplot(plot1, plot2, plot3, nrows = 1, shareY = TRUE)%>%
+  layout(title = "Valence of different spotify playlists, captured in an histogram.",
+    xaxis = list(title = "Valence (0-1)"),
+    yaxis = list(title = "Frequency"))
 ```
 
 ***
-New stuff
+Valence plot
 
-### new chromogram
+### Chromagrams
 
-```{r pop-chroma}
-
-ewf <-
-  get_tidy_audio_analysis("3cfnGXJ9bmiWvFqEO6ff8B?si=fc8b75cc5a254be0") |>
-  select(segments) |>
-  unnest(segments) |>
-  select(start, duration, pitches)
-
-loveontop <-
-  get_tidy_audio_analysis("1z6WtY7X4HQJvzxC4UgkSf?si=498f16c4cea74323") |>
-  select(segments) |>
-  unnest(segments) |>
-  select(start, duration, pitches)
-
-allineed <-
-  get_tidy_audio_analysis("164VgxTozx99XCinCB9ITR?si=797ce93143424c36") |>
-  select(segments) |>
-  unnest(segments) |>
-  select(start, duration, pitches)
-
-
-```
-
-```{r pop-chroma-plots}
-
-ewf_plot <- 
-  ewf |>
-  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
-  compmus_gather_chroma() |> 
-  ggplot(
-    aes(
-      x = start + duration / 2,
-      width = duration,
-      y = pitch_class,
-      fill = value
-    )
-  ) +
-  geom_tile() +
-  geom_vline(xintercept = 53, colour = "red") +
-  labs(
-    x = "Time (s)", 
-    y = NULL, 
-    fill = "Magnitude", 
-    title = "After the Love Has Gone (Earth, Wind, and Fire)"
-  ) +
-  theme_minimal() +
-  scale_fill_viridis_c() 
-
-
-loveontop_plot <- 
-  loveontop |>
-  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
-  compmus_gather_chroma() |> 
-  ggplot(
-    aes(
-      x = start + duration / 2,
-      width = duration,
-      y = pitch_class,
-      fill = value
-    )
-  ) +
-  geom_tile() +
-  geom_vline(xintercept = 184, colour = "red") +
-  labs(
-    x = "Time (s)", 
-    y = NULL, 
-    fill = "Magnitude", 
-    title = "Love On Top (Beyonce)"
-  ) +
-  theme_minimal() +
-  scale_fill_viridis_c() 
-
-
-allineed_plot <- 
-  allineed |>
-  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
-  compmus_gather_chroma() |> 
-  ggplot(
-    aes(
-      x = start + duration / 2,
-      width = duration,
-      y = pitch_class,
-      fill = value
-    )
-  ) +
-  geom_tile() +
-  geom_vline(xintercept = 137, colour = "red") +
-  geom_vline(xintercept = 186, colour = "red") +
-  labs(
-    x = "Time (s)", 
-    y = NULL, 
-    fill = "Magnitude", 
-    title = "All I Need (Collier, Mahalia, Ty Dolla $ign)"
-  ) +
-  theme_minimal() +
-  scale_fill_viridis_c() 
-
-plot_grid(ewf_plot, loveontop_plot, allineed_plot, ncol = 1)
-```
-***
-Nice stuff
-
-### New plot
-
-```{r twenty-five}
+```{r}
 circshift <- function(v, n) {
   if (n == 0) v else c(tail(v, n), head(v, -n))
 }
@@ -298,53 +142,128 @@ key_templates <-
     "D#:min", circshift(minor_key, 3)
   )
 
-get_tidy_audio_analysis("4EwsiiT0hwIi38gAVEEtIV") |>
-  compmus_align(sections, segments) |>
-  select(sections) |>
-  unnest(sections) |>
-  mutate(
-    pitches =
-      map(segments,
-        compmus_summarise, pitches,
-        method = "acentre", norm = "manhattan"
-      )
-  ) |>
-  compmus_match_pitch_template(key_templates, "aitchison", "manhattan") |>
-  ggplot(
-    aes(x = start + duration / 2, width = duration, y = name, fill = d)
-  ) +
-  geom_tile() +
+create_chromagram <- function(audio_analysis, key_templates) {
+  audio_analysis %>%
+    compmus_align(sections, segments) %>%
+    select(sections) %>%
+    unnest(sections) %>%
+    mutate(
+      pitches = map(segments,
+                     compmus_summarise, pitches,
+                     method = "acentre", norm = "manhattan")
+    ) %>%
+    compmus_match_pitch_template(key_templates, "aitchison", "manhattan") 
+}
+
+list_of_audio_analyses <- list(
+  get_tidy_audio_analysis("6tNQ70jh4OwmPGpYy6R2o9"),
+  get_tidy_audio_analysis("51ZQ1vr10ffzbwIjDCwqm4"),
+  get_tidy_audio_analysis("3qhlB30KknSejmIvZZLjOD"),
+
+  get_tidy_audio_analysis("0uHrMbMv3c78398pIANDqR"),
+  get_tidy_audio_analysis("272RmS2rS59JVBhlSR0cMv"),
+  get_tidy_audio_analysis("4nOOoo9OJbgnTBNHe5b6nD"),
+
+  get_tidy_audio_analysis("1ULyVVWV7PjtOfGM1UspG7"),
+  get_tidy_audio_analysis("1fbgXK7wcdKu42CI5l0dTP"),
+  get_tidy_audio_analysis("0w8xLwXp9WDrlPxyWofCUS")
+)
+
+song_names <- c("Benson Boone - Beautiful things",
+                "Ariana Grande - We cant be friends",
+                "Djo - End of beginning",
+
+                "Josot Klein - Europapa",
+                "Rachel Wallace - Tell me why",
+                "Brutalismus 3000 - Romantica",
+
+                "IDK - DENiM",
+                "TOBi - Someone I Knew",
+                "Russ - In the dirt")
+# Create chromagrams for each song
+chromagrams <- lapply(seq_along(list_of_audio_analyses), function(i) {
+  create_chromagram(list_of_audio_analyses[[i]], key_templates) %>%
+    mutate(song_number = i, song_name = song_names[i])
+})
+
+# Combine chromagrams into one data frame
+combined_chromagrams <- do.call(rbind, chromagrams)
+
+# Create the plot
+combined_plot <- ggplot(combined_chromagrams) +
+  geom_tile(aes(x = start + duration / 2, width = duration, y = name, fill = d)) +
   scale_fill_viridis_c(option = "E", guide = "none") +
   theme_minimal() +
-  labs(x = "Time (s)", y = "", fill = "Distance")
+  labs(x = "Time (s)", y = "", fill = "Distance") +
+  facet_wrap(~ song_name, nrow = 3, ncol = 3) +  # Facet by song name in a 3x3 grid
+  theme(strip.background = element_rect(color = "white", fill = "white"),  # Add padding around facet labels
+        strip.text = element_text(size = 5, face = "bold"),  # Adjust facet label size
+        strip.placement = "outside",  # Placing titles outside the plot area
+        panel.spacing = unit(1, "lines"),  # Increase spacing between facets
+        plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"),  # Adjusting plot margins
+        axis.text.y = element_text(size = 4.5, angle = 45, hjust = 1))  # Reduce the size of y-axis labels5 degrees
+
+# Print the combined plot
+print(combined_plot)
 ```
 
 ***
-New visualisation
+new stuff
 
 ### Tempogram
 ```{r}
-europapa_url <- '0uHrMbMv3c78398pIANDqR'
-graveola_url <- '6PJasPKAzNLSOzxeAH33j2'
-graveola <- get_tidy_audio_analysis(europapa_url)
+# Load tempograms
+library(gridExtra)
+tempogram1 <- readRDS(file = "data/tempogram1.RDS")
+tempogram2 <- readRDS(file = "data/tempogram2.RDS")
+tempogram3 <- readRDS(file = "data/tempogram3.RDS")
+tempogram4 <- readRDS(file = "data/tempogram4.RDS")
+tempogram5 <- readRDS(file = "data/tempogram5.RDS")
+tempogram6 <- readRDS(file = "data/tempogram6.RDS")
+tempogram7 <- readRDS(file = "data/tempogram7.RDS")
+tempogram8 <- readRDS(file = "data/tempogram8.RDS")
+tempogram9 <- readRDS(file = "data/tempogram9.RDS")
 
-graveola |>
-  tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
-  ggplot(aes(x = time, y = bpm, fill = power)) +
-  geom_raster() +
-  scale_fill_viridis_c(guide = "none") +
-  labs(x = "Time (s)", y = "Tempo (BPM)") +
-  theme_classic()
+song_names <- c("Benson Boone - Beautiful things",
+                "Ariana Grande - We cant be friends",
+                "Djo - End of beginning",
+
+                "Josot Klein - Europapa",
+                "Rachel Wallace - Tell me why",
+                "Brutalismus 3000 - Romantica",
+
+                "IDK - DENiM",
+                "TOBi - Someone I Knew",
+                 "Russ - In the dirt")
+
+
+# Convert tempograms to ggplot objects and add titles
+tempogram_plots <- lapply(seq_along(list(tempogram1, tempogram2, tempogram3, tempogram4, tempogram5, tempogram6, tempogram7, tempogram8, tempogram9)), function(i) {
+  tempogram <- list(tempogram1, tempogram2, tempogram3, tempogram4, tempogram5, tempogram6, tempogram7, tempogram8, tempogram9)[[i]]
+  ggplot(tempogram[[1]]$data, aes(x = time, y = bpm, fill = power)) +
+    geom_raster() +
+    scale_fill_viridis_c(guide = "none") +
+    labs(x = "Time (s)", y = "Tempo (BPM)", title = paste("Track:", song_names[i])) +
+    theme_classic() +
+    theme(plot.title = element_text(size = 7))
+})
+
+grid.arrange(grobs = tempogram_plots, ncol = 3)
+
 ```
 
 ***
 New tempogram
 
 ### Dendogram
+
 ```{r}
-joost_url = '3HoBmXOKHexP12ekdvXjLY'
+combined_tracks <- rbind(hardcore_tracks, top100_tracks, mellow_bars)
+```
+
+```{r}
 halloween <-
-  get_playlist_audio_features("Joost Klein", joost_url) |>
+  mellow_bars |>
   add_audio_analysis() |>
   mutate(
     segments = map2(segments, key, compmus_c_transpose),
@@ -418,3 +337,6 @@ heatmaply(
 
 ***
 New stuff
+
+### Conclusion and discussion
+In conclusion, hardcore tracks resemble much less 'loudness' then the track types Techno and Mellow. One could however question Spotify's ability to label tracks as loud.
