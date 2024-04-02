@@ -39,6 +39,7 @@ library(compmus)
 library(ggdendro)
 library(heatmaply)
 library(tidymodels)
+library(cowplot)
 ```
 
 ```{r, setup2}
@@ -77,6 +78,8 @@ In this plot, the 'loudness' of three different playlists, 'Mellow bars', 'Hardc
 
 ### Conclusion and discussion
 In conclusion, hardcore tracks resemble much less 'loudness' then the track types Techno and Mellow. One could however question Spotify's ability to label tracks as loud.
+
+### Tallis plot
 ```{r tallis}
 tallis <-
   get_tidy_audio_analysis("2J3Mmybwue0jyQ0UVMYurH") |>
@@ -147,6 +150,9 @@ maria <-
   labs(x = "The Tallis Scholars", y = "La Chapelle Royale")
 maria
 ```
+
+***
+New stuff
 
 ### new chromogram
 
@@ -312,94 +318,11 @@ get_tidy_audio_analysis("4EwsiiT0hwIi38gAVEEtIV") |>
   theme_minimal() +
   labs(x = "Time (s)", y = "", fill = "Distance")
 ```
-### new stuff
 
-```{r}
-track_features <-
-  get_tidy_audio_analysis("3cfnGXJ9bmiWvFqEO6ff8B?si=fc8b75cc5a254be0") |>
-  select(segments) |>
-  unnest(segments) |>
-  select(pitches)
+***
+New visualisation
 
-# Initialize empty vectors to store keys and frequencies
-keys <- c()
-frequencies <- c()
-
-# Iterate over each sublist in all_keys
-for (key_list in track_features) {
-  # Find the index of the maximum value in the sublist
-  max_index <- sapply(key_list, which.max)
-  
-  # Append the corresponding key and frequency to the vectors
-  keys <- c(keys, names(key_list)[max_index])
-  frequencies <- c(frequencies, key_list[max_index])
-}
-#print(frequencies)
-## Plot histogram
-#barplot(frequencies, names.arg = keys, xlab = "Keys", ylab = "Frequency",
-#        main = "Histogram of Song Keys", col = "lightblue")
-```
-
-
-```{r}
-# Flatten the list of vectors into a single numeric vector
-all_frequencies <- unlist(frequencies)
-
-# Plot histogram
-barplot(all_frequencies, names.arg = rep(keys, sapply(frequencies, length)),
-        xlab = "Keys", ylab = "Frequency", main = "Histogram of Song Keys",
-        col = "lightblue")
-
-```
-```{r}
-# Example data
-all_keys <- list(
-  c(C = 0.4, `C#|Db` = 0.054, D = 0.023, `D#|Eb` = 0.1),
-  c(C = 0.536, `C#|Db` = 0.07, D = 0.045, `D#|Eb` = 0.1),
-  c(C = 0.567, `C#|Db` = 0.229, D = 0.037, `D#|Eb` = 0.1)
-)
-
-# Extract keys and their frequencies
-keys <- sapply(all_keys, function(x) names(x)[which.max(x)])
-frequencies <- sapply(all_keys, function(x) max(x))
-
-# Plot histogram
-hist(frequencies, breaks = length(unique(keys)), xlab = "Keys", ylab = "Frequency",
-     main = "Histogram of Song Keys", col = "lightblue")
-```
-
-
-```{r}
-# Example data (keys used in each group)
-verse_keys <- c('C', 'G', 'D', 'A', 'E', 'B')
-chorus_keys <- c('C', 'G', 'D', 'A', 'E', 'B', 'F#')
-bridge_keys <- c('C', 'G', 'D', 'A', 'E')
-
-# Combine all keys
-#all_keys <- c(verse_keys, chorus_keys, bridge_keys)
-all_keys <- track_features
-
-# Plotting histograms
-par(mfrow=c(1,1))
-hist(as.numeric(factor(all_keys, levels = c("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"))),
-     breaks=12, col="lightblue", xlab="Key", ylab="Frequency",
-     main="Histogram of Keys for Different Groups in the Song",
-     xlim=c(0.5,12.5), ylim=c(0, max(table(all_keys))))
-
-# Add bars for each group
-hist(as.numeric(factor(verse_keys, levels = c("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"))),
-     breaks=12, col=rgb(0,0,1,0.5), add=TRUE)
-hist(as.numeric(factor(chorus_keys, levels = c("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"))),
-     breaks=12, col=rgb(1,0,0,0.5), add=TRUE)
-hist(as.numeric(factor(bridge_keys, levels = c("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"))),
-     breaks=12, col=rgb(0,1,0,0.5), add=TRUE)
-
-# Add legend
-legend("topright", legend=c("Verse", "Chorus", "Bridge"),
-       fill=c(rgb(0,0,1,0.5), rgb(1,0,0,0.5), rgb(0,1,0,0.5)))
-
-```
-
+### Tempogram
 ```{r}
 europapa_url <- '0uHrMbMv3c78398pIANDqR'
 graveola_url <- '6PJasPKAzNLSOzxeAH33j2'
@@ -414,6 +337,10 @@ graveola |>
   theme_classic()
 ```
 
+***
+New tempogram
+
+### Dendogram
 ```{r}
 joost_url = '3HoBmXOKHexP12ekdvXjLY'
 halloween <-
@@ -476,6 +403,10 @@ halloween_dist |>
   ggdendrogram()
 ```
 
+***
+New Dendogram
+
+### Clustering
 ```{r}
 heatmaply(
   halloween_juice,
@@ -485,3 +416,5 @@ heatmaply(
 )
 ```
 
+***
+New stuff
