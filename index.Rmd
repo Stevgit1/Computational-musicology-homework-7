@@ -51,9 +51,9 @@ top100_tracks <- get_playlist_audio_features("", "37i9dQZEVXbNG2KDcFcKOF")
 
 ### Introduction
 
-On Spotify, there are all kinds of playlists that have in some sense a connection to being considered mellow. This corpus will try to take a deeper dive into this, questioning what kind of attributes make a playlist 'mellow', an what don't. Specifically, in this version, there will be taken a deeper look at to what extent the attribute 'loudness', as defined by Spotify, has an influence on different song types.
+On Spotify, there are all kinds of playlists that have in some sense a connection to being considered mellow. This corpus will try to take a deeper dive into this, questioning what kind of attributes make a playlist 'mellow', an what don't. This will be done with the use of three different datasets with musical infromation. These will consists of a mellow playlist, a hardcore playlist, and the playlist for the top 100 songs in the world at the moment. Next, the features and measurement of the playlists will be studied using histograms for loudness and valence, Chromagrams, tempograms, and a from of clustering. After the analysis, there will be a conclusion section.
   
-### Visualization 1
+### Loudness of different styles
 
 ```{r, loudness visualisation}
 plot1 <- mellow_bars %>%
@@ -76,9 +76,9 @@ subplot(plot1, plot2, plot3, nrows = 1, shareY = TRUE)%>%
 
 
 ***
-In this plot, the 'loudness' of three different playlists, 'Mellow bars', 'Hardcore mix', and 'Techno bunker' are visualized in histograms. Looking at the chart, one might be surprised to find the loudness of hardcore tracks to be considerably lower in comparison to the Techno and mellow playlists. Additionally, the loudness of the Techno tracks and the mellow tracks seem on the same level, which is interesting.
+In this plot, the 'loudness' of three different playlists, 'Mellow bars', 'Hardcore mix', and 'top 100 world' are visualized in histograms. Looking at the chart, one might be surprised to find the loudness of hardcore tracks to be considerably lower in comparison to the Techno and mellow playlists. Additionally, the loudness of the Techno tracks and the mellow tracks seem on the same level, which is interesting.
 
-### Valence
+### Valence of different styles
 
 ```{r, valence visualisation}
 plot1 <- mellow_bars %>%
@@ -100,7 +100,7 @@ subplot(plot1, plot2, plot3, nrows = 1, shareY = TRUE)%>%
 ```
 
 ***
-Valence plot
+In this plot, the 'Valence' of three different playlists, 'Mellow bars', 'Hardcore mix', and 'top 100 world' are visualized in histograms. A notable insight can be gathered when comparing the plot for mellow tracks and the plot for hardcore tracks. In the plot for mellow tracks, there seems much more tracks with a relatively high valance, in comparison to the hardcore tracks, which have relatively low valence.
 
 ### Chromagrams
 
@@ -208,7 +208,7 @@ print(combined_plot)
 ```
 
 ***
-new stuff
+Chromagrams of 3 different playlists, each consiting of three songs. More specifically, each row consists of three tracks belonging to a certain playlist. The tracks for the top 10 playlist can be found in the upper row, the tracks for the hardcore playlist in the middle row, and the tracks for the mellow playlist in the last row.
 
 ### Tempogram
 ```{r}
@@ -253,7 +253,7 @@ grid.arrange(grobs = tempogram_plots, ncol = 3)
 ```
 
 ***
-New tempogram
+Tempograms of 3 different playlists, each consiting of three songs. More specifically, each row consists of three tracks belonging to a certain playlist. The tracks for the top 10 playlist can be found in the upper row, the tracks for the hardcore playlist in the middle row, and the tracks for the mellow playlist in the last row.
 
 ### Dendogram
 
@@ -323,7 +323,7 @@ halloween_dist |>
 ```
 
 ***
-New Dendogram
+Dendgram exploring the relations between diffrent tracks of the three used playlists combined.
 
 ### Clustering
 ```{r}
@@ -336,7 +336,5 @@ heatmaply(
 ```
 
 ***
-New stuff
 
 ### Conclusion and discussion
-In conclusion, hardcore tracks resemble much less 'loudness' then the track types Techno and Mellow. One could however question Spotify's ability to label tracks as loud.
