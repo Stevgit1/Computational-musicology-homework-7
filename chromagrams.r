@@ -48,29 +48,46 @@ create_chromagram <- function(audio_analysis, key_templates) {
     compmus_match_pitch_template(key_templates, "aitchison", "manhattan") 
 }
 
+
+random_top100 <- sample(nrow(top100_tracks), 3)
+top100_random <- top100_tracks[random_top100, "playlist_id"]
+songs_top100 <- top100_tracks[random_top100, "playlist_id"]
+
+random_mellow <- sample(nrow(mellow_bars), 3)
+mellow_random <- top100_tracks[random_mellow, "playlist_id"]
+songs_mellow <- top100_tracks[random_mellow, "playlist_id"]
+
+random_hardcore <- sample(nrow(hardcore_tracks), 3)
+hardcore_random <- top100_tracks[random_hardcore, "playlist_id"]
+songs_hardcore <- top100_tracks[random_hardcore, "playlist_id"]
+
+list_of_audio_analyses <- list(random)
+
 list_of_audio_analyses <- list(
   get_tidy_audio_analysis("6tNQ70jh4OwmPGpYy6R2o9"),
   get_tidy_audio_analysis("51ZQ1vr10ffzbwIjDCwqm4"),
   get_tidy_audio_analysis("3qhlB30KknSejmIvZZLjOD"),
   
-  get_tidy_audio_analysis("51ZQ1vr10ffzbwIjDCwqm4"),
-  get_tidy_audio_analysis("51ZQ1vr10ffzbwIjDCwqm4"),
-  get_tidy_audio_analysis("51ZQ1vr10ffzbwIjDCwqm4"),
+  get_tidy_audio_analysis("0uHrMbMv3c78398pIANDqR"),
+  get_tidy_audio_analysis("272RmS2rS59JVBhlSR0cMv"),
+  get_tidy_audio_analysis("4nOOoo9OJbgnTBNHe5b6nD"),
   
-  get_tidy_audio_analysis("51ZQ1vr10ffzbwIjDCwqm4"),
-  get_tidy_audio_analysis("51ZQ1vr10ffzbwIjDCwqm4"),
-  get_tidy_audio_analysis("51ZQ1vr10ffzbwIjDCwqm4")
+  get_tidy_audio_analysis("1ULyVVWV7PjtOfGM1UspG7"),
+  get_tidy_audio_analysis("1fbgXK7wcdKu42CI5l0dTP"),
+  get_tidy_audio_analysis("0w8xLwXp9WDrlPxyWofCUS")
 )
 
 song_names <- c("Benson Boone - Beautiful things",
                 "Ariana Grande - We cant be friends",
                 "Djo - End of beginning",
-                "B",
-                "CV",
-                "sfd",
-                "D",
-                "jj",
-                "GG")
+                
+                "Josot Klein - Europapa",
+                "Rachel Wallace - Tell me why",
+                "Brutalismus 3000 - Romantica",
+                
+                "IDK - DENiM",
+                "TOBi - Someone I Knew",
+                "Russ - In the dirt")
 # Create chromagrams for each song
 chromagrams <- lapply(seq_along(list_of_audio_analyses), function(i) {
   create_chromagram(list_of_audio_analyses[[i]], key_templates) %>%
@@ -96,3 +113,5 @@ combined_plot <- ggplot(combined_chromagrams) +
 
 # Print the combined plot
 print(combined_plot)
+
+saveRDS(object = combined_plot, file = 'data/chromagrams.RDS')

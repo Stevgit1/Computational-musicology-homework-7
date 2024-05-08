@@ -1,12 +1,12 @@
 ---
 title: "Mellow: a story"
 author: "Steven van Wely"
-date: "April the 2nd, 2024"
+date: "May the 7nd, 2024"
 output: 
   flexdashboard::flex_dashboard:
     storyboard: true
     self_contained: false
-    source: https://github.com/Stevgit1/Computational-musicology-homework-7/blob/main/index.Rmd
+    source: https://github.com/Stevgit1/Computational-musicology-homework-portfolio/blob/main/index.Rmd
     theme:
       heading_font:
         google: 
@@ -51,8 +51,19 @@ top100_tracks <- get_playlist_audio_features("", "37i9dQZEVXbNG2KDcFcKOF")
 
 ### Introduction
 
-On Spotify, there are all kinds of playlists that have in some sense a connection to being considered mellow. This corpus will try to take a deeper dive into this, questioning what kind of attributes make a playlist 'mellow', an what don't. This will be done with the use of three different datasets with musical infromation. These will consists of a mellow playlist, a hardcore playlist, and the playlist for the top 100 songs in the world at the moment. Next, the features and measurement of the playlists will be studied using histograms for loudness and valence, Chromagrams, tempograms, and a from of clustering. After the analysis, there will be a conclusion section.
-  
+On Spotify, there are all kinds of playlists that have in some sense a connection to being considered mellow. This corpus will try to take a deeper dive into this, questioning what kind of attributes make a playlist 'mellow', an what don't. This will be done with the use of three different datasets with musical information. These will consists of a 'mellow' playlist, a 'hardcore' playlist, and the playlist for the top 100 songs in the world at the moment. Next, the features and measurement of the playlists will be studied using histograms for loudness and valence, Chromagrams, Tempograms, and a form of clustering. After the analysis, there will be a conclusion section.
+
+### Used data
+As said before, the analysis will contain plot for loudness and valence. On top of that, there will be chromagrams and tempograms. In this section, I will briefly delve into the type of data that is used in this portfolio.
+
+The playlists where the data is derived from are 'mellow bars', 'Hardcore mix', and 'top 100 songs global'. For the loudness and valence plots, all tracks will be used in the visualisation. This is the case as well for the dendogram, which can be found at the end of this portfolio. For the tempograms and chromagrams on the other hand, there will be a different approach. For each playlist, 3 songs will be randomly sampled, which will add up to 9 songs in total. Subsequently, there will be 3 rows of 3 chromagrams/tempograms each.
+
+<iframe src="https://open.spotify.com/playlist/37i9dQZF1EIexrP9IBJXx5?si=ff638cccd31c44cf?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+
+<iframe src="https://open.spotify.com/playlist/37i9dQZEVXbNG2KDcFcKOF?si=20ac107e1499453d?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+
+<iframe src="https://open.spotify.com/playlist/37i9dQZF1DWT6MhXz0jw61?si=bf5f33488b2a44f1?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+
 ### Loudness of different styles
 
 ```{r, loudness visualisation}
@@ -208,7 +219,7 @@ print(combined_plot)
 ```
 
 ***
-Chromagrams of 3 different playlists, each consiting of three songs. More specifically, each row consists of three tracks belonging to a certain playlist. The tracks for the top 10 playlist can be found in the upper row, the tracks for the hardcore playlist in the middle row, and the tracks for the mellow playlist in the last row.
+Chromagrams of 3 different playlists, each consisting of three songs. More specifically, each row consists of three tracks belonging to a certain playlist. The tracks for the top 10 playlist can be found in the upper row, the tracks for the hardcore playlist in the middle row, and the tracks for the mellow playlist in the last row.
 
 ### Tempogram
 ```{r}
@@ -323,7 +334,7 @@ halloween_dist |>
 ```
 
 ***
-Dendgram exploring the relations between diffrent tracks of the three used playlists combined.
+Dendogram exploring the relations between different tracks of the three used playlists combined.
 
 ### Clustering
 ```{r}
