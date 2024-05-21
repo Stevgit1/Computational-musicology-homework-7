@@ -6,7 +6,7 @@ output:
   flexdashboard::flex_dashboard:
     storyboard: true
     self_contained: false
-    source: https://github.com/Stevgit1/Computational-musicology-homework-portfolio/blob/main/index.Rmd
+    source: https://github.com/Stevgit1/Computational-musicology-portfolio/blob/main/index.Rmd
     theme:
       heading_font:
         google: 
